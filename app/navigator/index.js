@@ -10,33 +10,60 @@ import SigninScreen from '../screens/Signin';
 import ProductDetailScreen from '../screens/ProductDetail';
 import CategoryScreen from '../screens/Category';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 
 const Tabs = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const BottomTab = () => {
   return (
-    <Tabs.Navigator screenOptions={{title: ''}}>
+    <Tabs.Navigator
+      tabBarOptions={{
+        showLabel: false,
+        activeTintColor: 'red',
+        inactiveTintColor: '#333333',
+      }}>
       <Tabs.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: () => <Icon name="home" size={25} />,
+          tabBarIcon: ({color}) => <Icon name="home" size={25} color={color} />,
         }}
       />
       <Tabs.Screen
         name="Favorite"
         component={FavoriteScreen}
         options={{
-          tabBarIcon: () => <Icon name="hearto" size={25} />,
+          tabBarIcon: ({color}) => (
+            <Icon name="hearto" size={25} color={color} />
+          ),
         }}
       />
-      <Tabs.Screen name="Cart" component={CartScreen} options={{
-          tabBarIcon: () => <Icon name="shoppingcart" size={25} />,
-        }}/>
-      <Tabs.Screen name="Store" component={StoreScreen} />
-      <Tabs.Screen name="Profile" component={ProfileScreen} />
+      <Tabs.Screen
+        name="Store"
+        component={StoreScreen}
+        options={{
+          tabBarIcon: ({color}) => (
+            <Icon name="enviromento" size={25} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Cart"
+        component={CartScreen}
+        options={{
+          tabBarIcon: ({color}) => (
+            <Icon name="shoppingcart" size={25} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({color}) => <Icon name="user" size={25} color={color} />,
+        }}
+      />
     </Tabs.Navigator>
   );
 };
@@ -53,4 +80,5 @@ const AppContainer = () => {
     </NavigationContainer>
   );
 };
+
 export default AppContainer;
