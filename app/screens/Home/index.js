@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,7 @@ import Header from '../../components/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {actFetchCategories} from '../../redux/actions';
 import Icon from 'react-native-vector-icons/AntDesign';
+import FeatureProductItem from '../../components/FeatureProductItem'
 
 const PRODUCTS = [
   {
@@ -553,26 +554,34 @@ const HomeScreen = () => {
   const [fadeAnim, setFadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(-200));
 
+  const [currentItemOnView, setCurrentItemOnView] = useState(0);
+
   const categoryList = useSelector(state => state.category.categoryList);
 
   useEffect(() => {
     dispatch(actFetchCategories());
-    Animated.timing(fadeAnim, {
+    /*Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1000,
+      duration: 2000,
     }).start();
 
-    Animated.spring(slideAnim,{
-        toValue: 0,
-        duration: 2000,
-        friction: 1,//độ ma sát, càng lớn hoạt cảnh càng chậm
-        tension: 1,//độ căn, càng lớn hoạt cảnh càng lâu
-    }).start();
-  }, [dispatch]);
+    Animated.spring(slideAnim, {
+      toValue: 0,
+      duration: 2000,
+      friction: 1, //độ ma sát, càng lớn hoạt cảnh càng chậm
+      tension: 1, //độ căn, càng lớn hoạt cảnh càng lâu
+    }).start();*/
+  }, [dispatch, fadeAnim, slideAnim]);
 
   const handleChangeCategory = id => () => {
     setSelectedCategory(id);
   };
+
+  //Lưu giá trị vị trí người dùng kéo đến
+  const handleChange = useCallback(params => {
+    console.log(params.changed);
+    setCurrentItemOnView(params.changed[0].index);
+  }, []);
 
   return (
     <SafeAreaView>
@@ -602,28 +611,13 @@ const HomeScreen = () => {
           data={PRODUCTS}
           keyExtractor={item => item.id}
           horizontal
-          renderItem={({item}) => (
-            <Animated.View
-              style={{
-                ...styles.productContainer,
-                opacity: fadeAnim,
-                transform: [{translateY: slideAnim}],
-              }}>
-              <View style={styles.productInfo}>
-                <Text style={styles.productCate}>
-                  {item.categories[0].category}
-                </Text>
-                <Text style={styles.productName}>
-                  {item.name
-                    .toLowerCase()
-                    .replace(item.categories[0].category.toLowerCase(), '')
-                    .trim()}
-                </Text>
-                <Text style={styles.productPrice}>${item.price}</Text>
-              </View>
-              <Image source={{uri: item.image}} style={styles.productImg} />
-              <Icon name="hearto" style={styles.iconHeart} />
-            </Animated.View>
+          viewabilityConfig={{
+            waitForInteraction: true,
+            viewAreaCoveragePercentThreshold: 80,
+          }}
+          onViewableItemsChanged={handleChange}
+          renderItem={({item, index}) => (
+            <FeatureProductItem  item={item} isCurrent={index === currentItemOnView} />
           )}
         />
       </View>
@@ -645,40 +639,5 @@ const styles = StyleSheet.create({
   },
   active: {
     color: 'red',
-  },
-  productContainer: {
-    backgroundColor: '#517ad5',
-    borderRadius: 15,
-    width: 220,
-    height: 300,
-    marginRight: 50,
-  },
-  productInfo: {
-    padding: 20,
-    height: 120,
-  },
-  productCate: {
-    fontSize: 15,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  productName: {
-    fontSize: 25,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  productPrice: {
-    color: '#fff',
-  },
-  productName: {
-    fontSize: 25,
-    color: '#fff',
-    fontWeight: 'bold',
-    textTransform: 'capitalize',
-  },
-  productImg: {
-    width: '120%',
-    height: 120,
-    transform: [{rotate: '-30deg'}],
   },
 });
