@@ -5,10 +5,21 @@ import Icon from 'react-native-vector-icons/AntDesign';
 const FeatureProductItem = props => {
   const {item, isCurrent} = props;
   const [flipAnim] = useState(new Animated.Value(0));
+  const [widthAnim] = useState(new Animated.Value(220));
+  const [heightAnim] = useState(new Animated.Value(300));
 
   useEffect(() => {
     if (isCurrent) {
       //make animation
+      Animated.timing(widthAnim, {
+        toValue: 330,
+        duration: 300,
+      }).start();
+      Animated.timing(heightAnim, {
+        toValue: 400,
+        duration: 300,
+      }).start();
+
       Animated.sequence([
         Animated.timing(flipAnim, {
           toValue: 1,
@@ -22,6 +33,15 @@ const FeatureProductItem = props => {
           tension: 1,
         }),
       ]).start();
+    } else {
+      Animated.timing(widthAnim, {
+        toValue: 220,
+        duration: 300,
+      }).start();
+      Animated.timing(heightAnim, {
+        toValue: 300,
+        duration: 300,
+      }).start();
     }
   }, [isCurrent, flipAnim]);
 
@@ -29,10 +49,16 @@ const FeatureProductItem = props => {
     <Animated.View
       style={{
         ...styles.productContainer,
-        transform: [{rotateY: flipAnim.interpolate({
-            inputRange:  [0,1],
-            outputRange: ['0deg','80deg'],
-        })}],
+        transform: [
+          {
+            rotateY: flipAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0deg', '80deg'],
+            }),
+          },
+        ],
+        width: widthAnim,
+        height: heightAnim,
         //opacity: fadeAnim,
         //transform: [{translateY: slideAnim}],
       }}>

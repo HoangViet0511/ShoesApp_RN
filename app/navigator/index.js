@@ -18,6 +18,7 @@ const Stack = createStackNavigator();
 const BottomTab = () => {
   return (
     <Tabs.Navigator
+      initialRouteName="Store"
       tabBarOptions={{
         showLabel: false,
         activeTintColor: 'red',

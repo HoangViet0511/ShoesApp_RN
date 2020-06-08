@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Header from '../../components/Header';
 import {useDispatch, useSelector} from 'react-redux';
-import {actFetchCategories} from '../../redux/actions';
+import {actFetchCategories, actGetProductCategory} from '../../redux/actions';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FeatureProductItem from '../../components/FeatureProductItem'
 
@@ -557,6 +557,7 @@ const HomeScreen = () => {
   const [currentItemOnView, setCurrentItemOnView] = useState(0);
 
   const categoryList = useSelector(state => state.category.categoryList);
+ 
 
   useEffect(() => {
     dispatch(actFetchCategories());
@@ -573,9 +574,13 @@ const HomeScreen = () => {
     }).start();*/
   }, [dispatch, fadeAnim, slideAnim]);
 
-  const handleChangeCategory = id => () => {
+  const handleChangeCategory = useCallback(id => () => {
     setSelectedCategory(id);
-  };
+    //call API, gửi id category lên lấy ds sản phẩm
+    //lưu lên store 
+    //tại Home, lấy xuống
+
+  },[]);
 
   //Lưu giá trị vị trí người dùng kéo đến
   const handleChange = useCallback(params => {
@@ -615,6 +620,8 @@ const HomeScreen = () => {
             waitForInteraction: true,
             viewAreaCoveragePercentThreshold: 80,
           }}
+          //onEndReachedThreshold={80} //còn 80px nữa là đụng đáy
+          //onEndReached={} //load dữ liệu tiếp theo
           onViewableItemsChanged={handleChange}
           renderItem={({item, index}) => (
             <FeatureProductItem  item={item} isCurrent={index === currentItemOnView} />
